@@ -7,7 +7,7 @@ const width = 500;
 const height = 500;
 
 
-fileInput?.addEventListener("change", handleMapUpload(this, height, width));
+fileInput?.addEventListener("change", (event) => handleMapUpload(event, height, width));
 
 const game = new ex.Engine({
     width: 500,
