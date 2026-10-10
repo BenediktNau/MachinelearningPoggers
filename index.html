@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <style>
+    body {
+      background-color: gray;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MLPoggers</title>
+  </head>
+  <body>
+    <form id="uploadForm">
+      <label for="fileInput">Datei auswählen:</label>
+      <input type="file" id="fileInput" accept=".png,.jpg" />
+    </form>
+
+    <div id="output"></div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
