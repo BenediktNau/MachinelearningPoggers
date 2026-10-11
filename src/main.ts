@@ -1,23 +1,30 @@
-import * as ex from 'excalibur'
-import { Car } from './car/car';
-import { handleMapUpload } from './helper/mapLoader';
+import * as ex from "excalibur";
+import { Car } from "./car/car";
+import { handleMapUpload, MapExportObj } from "./helper/mapLoader";
+import { startGame } from "./helper/game";
 
 const fileInput = document.querySelector<HTMLInputElement>("#fileInput");
 const width = 500;
 const height = 500;
-
-
-fileInput?.addEventListener("change", (event) => handleMapUpload(event, height, width));
 
 const game = new ex.Engine({
     width: 500,
     height: 500,
     pixelArt: true,
     pixelRatio: 2,
-    displayMode: ex.DisplayMode.FitScreen
-});
-
-const car = new Car();
-game.add(car);
+    displayMode: ex.DisplayMode.FitScreen,
+  });
 
 game.start();
+
+game.add(new ex.Label({
+    text: "Lade bitte eine Karte hoch"
+}))
+
+fileInput?.addEventListener("change", async (event) => {
+  const Map = await handleMapUpload(event, height, width);
+
+  if (Map) {
+    startGame(Map,game);
+  }
+});
