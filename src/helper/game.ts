@@ -23,6 +23,7 @@ const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   });
 
   const mapActor = new ex.Actor({
+    anchor: ex.vec(0,0), 
     graphic: mapCanvas
   })
 
