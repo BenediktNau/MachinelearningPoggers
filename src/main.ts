@@ -10,9 +10,7 @@ const height = 500;
 const game = new ex.Engine({
     width: 500,
     height: 500,
-    pixelArt: true,
     pixelRatio: 2,
-    displayMode: ex.DisplayMode.FitScreen,
   });
 
 game.start();

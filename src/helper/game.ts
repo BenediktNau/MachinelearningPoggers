@@ -2,12 +2,13 @@ import * as ex from "excalibur";
 import { MapExportObj } from "./mapLoader";
 import { Car } from "../car/car";
 
-export const startGame = (Map: MapExportObj, game: ex.Engine<any>) => {
+export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
+  await game.goToScene("root")
   game.removeScene("map");
   loadMap(Map, game);
-  game.goToScene("map")
+  await game.goToScene("map")
 
-  const car = new Car();
+  const car = new Car(Map.spawn);
   game.add(car);
 };
 
@@ -15,17 +16,17 @@ const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   const newMap = new ex.Scene();
 
   const mapCanvas = new ex.Canvas({
-    width: game.drawWidth,
-    height: game.drawHeight,
+    width: 500,
+    height: 500,
     cache: true,
     draw: (ctx) => ctx.drawImage(Map.canvas,0,0)
   });
-  
 
-  game
-  const loader = new ex.Loader([Map.canvas.])
+  const mapActor = new ex.Actor({
+    graphic: mapCanvas
+  })
 
 
-  newMap.add()
+  newMap.add(mapActor)
   game.add("map", newMap);
 };

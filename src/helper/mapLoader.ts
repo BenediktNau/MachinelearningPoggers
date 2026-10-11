@@ -1,14 +1,17 @@
-
 export class MapExportObj {
-    public canvas: OffscreenCanvas;
-    public spawn: { x: number; y: number };
-    public finish: { x: number; y: number };
+  public canvas: OffscreenCanvas;
+  public spawn: { x: number; y: number };
+  public finish: { x: number; y: number };
 
-    constructor(canvas: OffscreenCanvas, spawn: { x: number; y: number }, finish: { x: number; y: number }){
-        this.canvas = canvas;
-        this.finish = finish;
-        this.spawn = spawn;
-    }
+  constructor(
+    canvas: OffscreenCanvas,
+    spawn: { x: number; y: number },
+    finish: { x: number; y: number },
+  ) {
+    this.canvas = canvas;
+    this.finish = finish;
+    this.spawn = spawn;
+  }
 }
 
 export const handleMapUpload = async (
@@ -18,8 +21,12 @@ export const handleMapUpload = async (
 ) => {
   //Hier nehmen wir den Input dementsprechend das Geuploadede
   const input = event.currentTarget;
-  
-  let Map = new MapExportObj(new OffscreenCanvas(0,0), {x:50,y:50}, {x:450,y:450})
+
+  let Map = new MapExportObj(
+    new OffscreenCanvas(0, 0),
+    { x: 50, y: 50 },
+    { x: 450, y: 450 },
+  );
 
   //Wenn es kein HTMLInputElement ist schmeißen wirs einfach weg
   if (!(input instanceof HTMLInputElement)) {
@@ -47,10 +54,10 @@ export const handleMapUpload = async (
 
   if (ctx) {
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(bitmap, gameWidth, gameHeight);
+    ctx.drawImage(bitmap, 0, 0);
     const SpawnCoords = FindSpawn(ctx, gameWidth, gameHeight);
     const FinishCoords = FindFinish(ctx, gameWidth, gameHeight);
-    
+
     //Aufräumen der Bitmap
     bitmap.close();
 
@@ -59,7 +66,7 @@ export const handleMapUpload = async (
     Map.spawn = SpawnCoords;
     Map.finish = FinishCoords;
   }
-
+  
   return Map;
 };
 
@@ -73,7 +80,13 @@ const FindSpawn: (
   //Array durch gehen und ersten Block Rot finden
   for (let y = 0; y < gameHeight; y++) {
     for (let x = 0; x < gameWidth; x++) {
-      if (imgData.data[4 * (y * gameWidth + x)] == 255) {
+      if (
+        imgData.data[4 * (y * gameWidth + x)] == 255 &&
+        imgData.data[4 * (y * gameWidth + x) + 1] == 0 &&
+        imgData.data[4 * (y * gameWidth + x) + 2] == 0 &&
+        imgData.data[4 * (y * gameWidth + x) + 3] == 255
+      ) {
+        console.log("Found Spawn at: X:" + x + " Y:" + y);
         return { x, y };
       }
     }
@@ -91,7 +104,12 @@ const FindFinish: (
   //Array durch gehenm und ersten Block Blau finden
   for (let y = 0; y < gameHeight; y++) {
     for (let x = 0; x < gameWidth; x++) {
-      if (imgData.data[4 * (y * gameWidth + x) + 2] == 255) {
+      if (
+        imgData.data[4 * (y * gameWidth + x) + 2] == 255 &&
+        imgData.data[4 * (y * gameWidth + x) + 0] == 0 &&
+        imgData.data[4 * (y * gameWidth + x) + 1] == 0 &&
+        imgData.data[4 * (y * gameWidth + x) + 3] == 255
+      ) {
         console.log("Found Finishline at: X:" + x + " Y:" + y);
         return { x, y };
       }
@@ -99,4 +117,3 @@ const FindFinish: (
   }
   return { x: 50, y: 50 };
 };
-
