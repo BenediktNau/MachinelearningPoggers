@@ -1,5 +1,5 @@
 import * as ex from "excalibur";
-import { Car } from "./car/car";
+import { Car } from "./scripts/car/car";
 import { handleMapUpload, MapExportObj } from "./helper/mapLoader";
 import { startGame } from "./helper/game";
 
