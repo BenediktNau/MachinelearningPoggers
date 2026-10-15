@@ -7,16 +7,16 @@ export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
   await game.goToScene("root");
   game.removeScene("map");
   loadMap(Map, game);
-  const car = new Car(Map.spawn);
-  const sensors = new Sensors(Map, car);
 
   await game.goToScene("map");
-  game.add(sensors);
-  game.add(car);
+  
 };
 
 const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   const newMap = new ex.Scene();
+  const car = new Car(Map.spawn);
+  const sensors = new Sensors(Map, car);
+
 
   const mapCanvas = new ex.Canvas({
     width: 500,
@@ -31,5 +31,9 @@ const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   });
 
   newMap.add(mapActor);
+
+  newMap.add(sensors);
+  newMap.add(car);
   game.add("map", newMap);
+
 };

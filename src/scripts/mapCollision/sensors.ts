@@ -1,7 +1,8 @@
-import { Actor, Color, Engine, Vector } from "excalibur";
+import { Actor, Color, Engine, vec, Vector } from "excalibur";
 import { MapExportObj } from "../../helper/mapLoader";
-import { carCorners } from "../car/Icar";
 import { Car } from "../car/car";
+import { getPixelColor, colorsMatch, RGBA } from "../../helper/colorChecker";
+import { startGame } from "../../helper/game";
 
 export class Sensors extends Actor {
   constructor(map: MapExportObj, car: Car) {
@@ -18,36 +19,49 @@ export class Sensors extends Actor {
   private car: Car;
   private imageData: ImageData;
 
-  onPreUpdate(engine: Engine, elapsed: number): void {
+  onPreUpdate(engine: Engine, elapsed: number):  void {
     if (
-      this.detectCollisionOnLine(this.car.getCurrentBoxPoints().lt, this.car.getCurrentBoxPoints().rt, 2) >= 0
+      this.detectCollisionOnLine(
+        this.car.getCurrentBoxPoints().lt,
+        this.car.getCurrentBoxPoints().rt,
+        { r: 0, g: 0, b: 255, a: 255 },
+      ) >= 0
     ) {
-        console.log("collision")
-    
+        this.car.finish();
+    }
+
+    if (
+      this.detectCollisionOnLine(
+        this.car.getCurrentBoxPoints().lt,
+        this.car.getCurrentBoxPoints().rt,
+        { r: 0, g: 0, b: 0, a: 255 },
+      ) >= 0
+    ) {
+        this.car.crash();
     }
   }
 
   public detectCollisionOnLine = (
     startPosition: Vector,
     endPosition: Vector,
-    color: number,
+    color: RGBA,
   ) => {
     const vectorLength = startPosition.distance(endPosition);
     const vector = endPosition.sub(startPosition);
     const richtung = vector.normalize();
 
     for (let i = 0; i < vectorLength; i++) {
-      const coordsToTest = startPosition.add(richtung.scale(i));
-      const x = coordsToTest.x;
-      const y = coordsToTest.y;
-      if ((y * this.imageData.width + x) * 4 + color == 255) {
-        
+      const coordsToTest = floorVec(startPosition.add(richtung.scale(i)));
+      if (
+        colorsMatch(getPixelColor(this.imageData, coordsToTest)!, color, 10)
+      ) {
         return i;
-      } else {
-        console.log(i)
-        return -1;
       }
     }
     return -1;
   };
 }
+
+const floorVec = (vector: Vector) => {
+  return new Vector(Math.floor(vector.x), Math.floor(vector.y));
+};

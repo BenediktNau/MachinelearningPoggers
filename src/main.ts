@@ -15,6 +15,8 @@ const game = new ex.Engine({
 
 game.start();
 
+
+
 game.add(new ex.Label({
     text: "Lade bitte eine Karte hoch"
 }))

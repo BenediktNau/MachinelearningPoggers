@@ -1,5 +1,5 @@
 import * as ex from "excalibur";
-import { carCorners } from "./Icar";
+import { carCorners, State } from "./Icar";
 
 export class Car extends ex.Actor {
   constructor(pos: { x: number; y: number }) {
@@ -10,6 +10,9 @@ export class Car extends ex.Actor {
       color: ex.Color.Yellow,
     });
   }
+
+  private state: State = "running";
+  private timeAlive: number = 0;
 
   private speed: number = 0;
 
@@ -45,6 +48,10 @@ export class Car extends ex.Actor {
   public onPreUpdate(engine: ex.Engine, elapsed: number): void {
     const dt = elapsed / 1000;
 
+    if (this.state == "running") {
+      this.timeAlive += elapsed;
+    }
+
     if (engine.input.keyboard.isHeld(ex.Keys.W) && this.speed < 100) {
       this.speed = this.speed + 15 * dt;
     }
@@ -77,5 +84,17 @@ export class Car extends ex.Actor {
     this.vel = ex.Vector.fromAngle(this.rotation - 1.5708).scale(
       new ex.Vector(this.speed, this.speed),
     );
+  }
+
+  public getState(): State {
+    return this.state;
+  }
+
+  public crash(): void {
+    this.state = "crashed";
+  }
+
+  public finish(): void {
+    this.state = "finished";
   }
 }
