@@ -9,12 +9,13 @@ export class Car extends ex.Actor {
       height: 20,
       color: ex.Color.Yellow,
     });
+    this.startPos = ex.vec(pos.x, pos.y)
   }
 
   private state: State = "running";
   private timeAlive: number = 0;
-
   private speed: number = 0;
+  private startPos: ex.Vector;
 
   public getCurrentBoxPoints = () => {
     const floorVec = (v: ex.Vector) => ex.vec(Math.floor(v.x), Math.floor(v.y));
@@ -96,5 +97,11 @@ export class Car extends ex.Actor {
 
   public finish(): void {
     this.state = "finished";
+  }
+
+  public reset(): void {
+    this.timeAlive = 0;
+    this.state = "running"
+    this.pos=this.startPos;
   }
 }
