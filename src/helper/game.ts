@@ -16,7 +16,7 @@ export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
 const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   const newMap = new ex.Scene();
   
-   new GameCoordinator(1,newMap,Map);
+  new GameCoordinator(1,newMap,Map);
 
   const mapCanvas = new ex.Canvas({
     width: 500,

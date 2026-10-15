@@ -8,13 +8,12 @@ export class GameCoordinator {
     this.game = game;
 
     for (let i = 0; i < numberOfCars; i++) {
-        const car = new Car(map.spawn)
-        const sensors = new Sensors(map, car);
-        console.log("test")
-        game.add(car);
-        game.add(sensors);
-    }
+      const car = new Car(map.spawn);
+      const sensors = new Sensors(map, car);
 
+      game.add(car);
+      game.add(sensors);
+    }
   }
   private game: ex.Scene;
 
