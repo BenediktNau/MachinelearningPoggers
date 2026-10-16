@@ -20,10 +20,12 @@ export class Sensors extends Actor {
   private imageData: ImageData;
 
   onPreUpdate(engine: Engine, elapsed: number):  void {
+    const currentBoxPoints = this.car.getCurrentBoxPoints()
+    
     if (
       this.detectCollisionOnLine(
-        this.car.getCurrentBoxPoints().lt,
-        this.car.getCurrentBoxPoints().rt,
+        currentBoxPoints.lt,
+        currentBoxPoints.rt,
         { r: 0, g: 0, b: 255, a: 255 },
       ) >= 0
     ) {
@@ -32,8 +34,8 @@ export class Sensors extends Actor {
 
     if (
       this.detectCollisionOnLine(
-        this.car.getCurrentBoxPoints().lt,
-        this.car.getCurrentBoxPoints().rt,
+        currentBoxPoints.lt,
+        currentBoxPoints.rt,
         { r: 0, g: 0, b: 0, a: 255 },
       ) >= 0
     ) {
@@ -51,7 +53,7 @@ export class Sensors extends Actor {
     const richtung = vector.normalize();
 
     for (let i = 0; i < vectorLength; i++) {
-      const coordsToTest = floorVec(startPosition.add(richtung.scale(i)));
+      const coordsToTest = startPosition.add(richtung.scale(i));
       if (
         colorsMatch(getPixelColor(this.imageData, coordsToTest)!, color, 10)
       ) {
@@ -61,7 +63,3 @@ export class Sensors extends Actor {
     return -1;
   };
 }
-
-const floorVec = (vector: Vector) => {
-  return new Vector(Math.floor(vector.x), Math.floor(vector.y));
-};

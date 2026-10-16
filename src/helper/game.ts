@@ -1,7 +1,5 @@
 import * as ex from "excalibur";
 import { MapExportObj } from "./mapLoader";
-import { Car } from "../scripts/car/car";
-import { Sensors } from "../scripts/mapCollision/sensors";
 import { GameCoordinator } from "./gameCoordinator";
 
 export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
@@ -10,13 +8,10 @@ export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
   loadMap(Map, game);
 
   await game.goToScene("map");
-  
 };
 
 const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   const newMap = new ex.Scene();
-  
-  new GameCoordinator(1,newMap,Map);
 
   const mapCanvas = new ex.Canvas({
     width: 500,
@@ -31,7 +26,7 @@ const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   });
 
   newMap.add(mapActor);
+  new GameCoordinator(1, newMap, Map);
 
   game.add("map", newMap);
-
 };
