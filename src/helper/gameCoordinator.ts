@@ -11,6 +11,7 @@ export class GameCoordinator {
     for (let i = 0; i < numberOfCars; i++) {
       const car = new Car(map.spawn, this.checkCrash);
       const sensors = new Sensors(map, car);
+      this.cars.push(car);
 
       game.add(car);
       game.add(sensors);

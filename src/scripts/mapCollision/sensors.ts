@@ -20,6 +20,8 @@ export class Sensors extends Actor {
   private imageData: ImageData;
 
   onPreUpdate(engine: Engine, elapsed: number):  void {
+    if (this.car.getState() != "running") return;
+
     const currentBoxPoints = this.car.getCurrentBoxPoints()
     
     if (
@@ -30,6 +32,7 @@ export class Sensors extends Actor {
       ) >= 0
     ) {
         this.car.finish();
+        return;
     }
 
     if (

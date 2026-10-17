@@ -41,58 +41,45 @@ export class Car extends ex.Actor {
   public onPreUpdate(engine: ex.Engine, elapsed: number): void {
     const dt = elapsed / 1000;
 
-    if (this.state == "running") {
-      this.timeAlive += elapsed;
-    }
-    if (this.timeAlive >= 150000) {
-      this.timeout();
+    if (this.state != "running") {
+      this.vel = ex.Vector.Zero;
+      return;
     }
 
-    if (
-      engine.input.keyboard.isHeld(ex.Keys.W) &&
-      this.speed < 100 &&
-      this.getState() == "running"
-    ) {
+    this.timeAlive += elapsed;
+    if (this.timeAlive >= 150000) {
+      this.timeout();
+      this.vel = ex.Vector.Zero;
+      return;
+    }
+
+    if (engine.input.keyboard.isHeld(ex.Keys.W) && this.speed < 100) {
       this.speed = this.speed + 15 * dt;
     }
 
     if (
       (this.speed > 4 || this.speed < -4) &&
-      engine.input.keyboard.isHeld(ex.Keys.A) &&
-      this.getState() == "running"
+      engine.input.keyboard.isHeld(ex.Keys.A)
     ) {
       this.rotation = this.rotation - 1.5 * dt;
     }
 
     if (
       (this.speed > 4 || this.speed < -4) &&
-      engine.input.keyboard.isHeld(ex.Keys.D) &&
-      this.getState() == "running"
+      engine.input.keyboard.isHeld(ex.Keys.D)
     ) {
       this.rotation = this.rotation + 1.5 * dt;
     }
 
-    if (
-      engine.input.keyboard.isHeld(ex.Keys.S) &&
-      this.speed > -60 &&
-      this.getState() == "running"
-    ) {
+    if (engine.input.keyboard.isHeld(ex.Keys.S) && this.speed > -60) {
       this.speed = this.speed - 30 * dt;
     }
 
-    if (
-      !engine.input.keyboard.isHeld(ex.Keys.W) &&
-      this.speed > 0 &&
-      this.getState() == "running"
-    ) {
+    if (!engine.input.keyboard.isHeld(ex.Keys.W) && this.speed > 0) {
       this.speed = this.speed - 9 * dt;
     }
 
-    if (
-      !engine.input.keyboard.isHeld(ex.Keys.S) &&
-      this.speed < 0 &&
-      this.getState() == "running"
-    ) {
+    if (!engine.input.keyboard.isHeld(ex.Keys.S) && this.speed < 0) {
       this.speed = this.speed + 9 * dt;
     }
     this.vel = ex.Vector.fromAngle(this.rotation - 1.5708).scale(
@@ -107,14 +94,17 @@ export class Car extends ex.Actor {
   public crash(): void {
     this.state = "crashed";
     this.speed = 0;
+    this.onDone("crashed");
   }
   public timeout(): void {
     this.state = "timeout";
+    this.onDone("timeout");
     this.speed = 0;
   }
 
   public finish(): void {
     this.state = "finished";
+    this.onDone("finished");
     this.speed = 0;
   }
 
@@ -122,6 +112,8 @@ export class Car extends ex.Actor {
     this.speed = 0;
     this.timeAlive = 0;
     this.state = "running";
-    this.pos = this.startPos;
+    this.pos = this.startPos.clone();
+    this.rotation = 0;
+    this.vel = ex.Vector.Zero;
   }
 }
