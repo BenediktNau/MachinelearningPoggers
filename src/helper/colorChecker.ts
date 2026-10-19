@@ -34,6 +34,8 @@ export const colorsMatch = (
   b: RGBA,
   tolerance: number = 0,
 ): boolean => {
+
+  if(a === null || b === null) return false;
   return (
     Math.abs(a.r - b.r) <= tolerance &&
     Math.abs(a.g - b.g) <= tolerance &&
