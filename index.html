@@ -1,26 +1,129 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MLPoggers</title>
-       <style>
-    body {
-      background-color: gray;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        padding: 24px;
+        background: #0f172a;
+        color: #e2e8f0;
+        font: 14px/1.4 system-ui, sans-serif;
+      }
+      canvas {
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+      aside {
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      h1 { margin: 0; font-size: 20px; }
+      section {
+        background: #1e293b;
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      h2 {
+        margin: 0;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+      label { display: flex; flex-direction: column; gap: 2px; }
+      label span { display: flex; justify-content: space-between; }
+      label.check { flex-direction: row; align-items: center; gap: 8px; }
+      output, #stats b { font-variant-numeric: tabular-nums; color: #38bdf8; }
+      input[type="range"] { width: 100%; accent-color: #38bdf8; }
+      #stats { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+      #stats b { text-align: right; }
+      .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      button, .button {
+        padding: 8px;
+        border: 0;
+        border-radius: 8px;
+        background: #334155;
+        color: inherit;
+        font: inherit;
+        text-align: center;
+        cursor: pointer;
+      }
+      button:hover, .button:hover { background: #475569; }
+      .primary { background: #0284c7; grid-column: span 2; }
+      .primary:hover { background: #0ea5e9; }
+      input[type="file"] { display: none; }
+      small { color: #94a3b8; }
+    </style>
   </head>
   <body>
-    <form id="uploadForm">
-      <label for="fileInput">Datei auswählen:</label>
-      <input type="file" id="fileInput" accept=".png" />
-    </form>
+    <canvas id="game"></canvas>
 
-    <div id="output"></div>
+    <aside>
+      <h1>MLPoggers 🏎️</h1>
+
+      <section>
+        <h2>Karte &amp; Modell</h2>
+        <div class="buttons">
+          <label class="button primary">
+            Karte hochladen (.png)
+            <input type="file" id="fileInput" accept=".png" />
+          </label>
+          <button id="exportBtn">Modell exportieren</button>
+          <label class="button">
+            Modell importieren
+            <input type="file" id="importInput" accept=".json" />
+          </label>
+          <button id="restartBtn" style="grid-column: span 2">Training neu starten</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Training</h2>
+        <div id="stats">
+          <span>Generation</span><b data-stat="generation">–</b>
+          <span>Autos unterwegs</span><b data-stat="running">–</b>
+          <span>Im Ziel (letzte Gen.)</span><b data-stat="lastFinished">–</b>
+          <span>Fitness (letzte Gen.)</span><b data-stat="lastFitness">–</b>
+          <span>Fitness (Rekord)</span><b data-stat="bestFitness">–</b>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameter</h2>
+        <!-- data-param = Name des Feldes in src/AI/params.ts -->
+        <label><span>Mutationsrate <output></output></span>
+          <input type="range" data-param="mutationRate" min="0" max="1" step="0.05" /></label>
+        <label><span>Mutationsstärke <output></output></span>
+          <input type="range" data-param="mutationStrength" min="0" max="2" step="0.05" /></label>
+        <label><span>Elite (bleiben unverändert) <output></output></span>
+          <input type="range" data-param="elite" min="1" max="20" step="1" /></label>
+        <label><span>Timeout in Sekunden <output></output></span>
+          <input type="range" data-param="timeout" min="5" max="60" step="1" /></label>
+        <label><span>Zeitraffer <output></output></span>
+          <input type="range" data-param="simSpeed" min="1" max="4" step="1" /></label>
+        <label class="check"><input type="checkbox" data-param="showRays" /> Sensoren anzeigen</label>
+        <small>Wirkt erst nach „Training neu starten“:</small>
+        <label><span>Anzahl Autos <output></output></span>
+          <input type="range" data-param="population" min="5" max="200" step="5" /></label>
+        <label><span>Versteckte Neuronen <output></output></span>
+          <input type="range" data-param="hiddenSize" min="2" max="24" step="1" /></label>
+      </section>
+    </aside>
 
     <script type="module" src="./src/main.ts"></script>
   </body>

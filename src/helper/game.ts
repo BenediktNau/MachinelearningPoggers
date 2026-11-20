@@ -2,15 +2,22 @@ import * as ex from "excalibur";
 import { MapExportObj } from "./mapLoader";
 import { GameCoordinator } from "./gameCoordinator";
 
-export const startGame = async (Map: MapExportObj, game: ex.Engine<any>) => {
+import { DrivingNetwork } from "../AI/Input";
+
+export const startGame = async (
+  Map: MapExportObj,
+  game: ex.Engine<any>,
+  seed?: DrivingNetwork,
+) => {
   await game.goToScene("root");
   game.removeScene("map");
-  loadMap(Map, game);
+  const coordinator = loadMap(Map, game, seed);
 
   await game.goToScene("map");
+  return coordinator;
 };
 
-const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
+const loadMap = (Map: MapExportObj, game: ex.Engine<any>, seed?: DrivingNetwork) => {
   const newMap = new ex.Scene();
 
   const mapCanvas = new ex.Canvas({
@@ -26,7 +33,8 @@ const loadMap = (Map: MapExportObj, game: ex.Engine<any>) => {
   });
 
   newMap.add(mapActor);
-  new GameCoordinator(1, newMap, Map);
+  const coordinator = new GameCoordinator(newMap, Map, seed);
 
   game.add("map", newMap);
+  return coordinator;
 };
