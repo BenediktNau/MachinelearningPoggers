@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MLPoggers</title>
+    <link rel="icon" type="image/gif" href="./src/assets/pepe.gif" />
     <style>
       * { box-sizing: border-box; }
       body {
@@ -29,7 +30,8 @@
         flex-direction: column;
         gap: 16px;
       }
-      h1 { margin: 0; font-size: 20px; }
+      h1 { margin: 0; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+      h1 img { height: 40px; }
       section {
         background: #1e293b;
         border-radius: 12px;
@@ -64,25 +66,62 @@
         cursor: pointer;
       }
       button:hover, .button:hover { background: #475569; }
-      .primary { background: #0284c7; grid-column: span 2; }
+      .primary { background: #0284c7; }
       .primary:hover { background: #0ea5e9; }
       input[type="file"] { display: none; }
       small { color: #94a3b8; }
+      dialog {
+        width: min(560px, calc(100vw - 32px));
+        padding: 0;
+        border: 0;
+        border-radius: 12px;
+        background: #1e293b;
+        color: inherit;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+      dialog::backdrop { background: rgba(2, 6, 23, 0.7); }
+      dialog form {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px 0;
+      }
+      dialog form button { padding: 4px 10px; }
+      #mapGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 10px;
+        padding: 14px 16px 16px;
+      }
+      #mapGrid button {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 6px;
+        text-transform: capitalize;
+      }
+      #mapGrid img {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 6px;
+        image-rendering: pixelated;
+      }
     </style>
   </head>
   <body>
     <canvas id="game"></canvas>
 
     <aside>
-      <h1>MLPoggers 🏎️</h1>
+      <h1>MLPoggers <img src="./src/assets/pepe.gif" alt="Pepe fährt Auto" /></h1>
 
       <section>
         <h2>Karte &amp; Modell</h2>
         <div class="buttons">
           <label class="button primary">
-            Karte hochladen (.png)
+            Karte hochladen
             <input type="file" id="fileInput" accept=".png" />
           </label>
+          <button id="mapSelectBtn" class="primary">Karte wählen</button>
           <button id="exportBtn">Modell exportieren</button>
           <label class="button">
             Modell importieren
@@ -124,6 +163,14 @@
           <input type="range" data-param="hiddenSize" min="2" max="24" step="1" /></label>
       </section>
     </aside>
+
+    <dialog id="mapDialog">
+      <form method="dialog">
+        <h2>Karte wählen</h2>
+        <button aria-label="Schließen">✕</button>
+      </form>
+      <div id="mapGrid"></div>
+    </dialog>
 
     <script type="module" src="./src/main.ts"></script>
   </body>

@@ -77,7 +77,7 @@ export class GameCoordinator {
     };
   }
 
-  /** Bestes Netz der letzten abgeschlossenen Generation, z. B. für den Export. */
+  //Export der besten Gewichte
   public getBest(): DrivingNetwork {
     return this.best;
   }

@@ -22,27 +22,38 @@ export const handleMapUpload = async (
   //Hier nehmen wir den Input dementsprechend das Geuploadede
   const input = event.currentTarget;
 
-  let Map = new MapExportObj(
-    new OffscreenCanvas(0, 0),
-    { x: 50, y: 50 },
-    { x: 450, y: 450 },
-  );
-
   //Wenn es kein HTMLInputElement ist schmeißen wirs einfach weg
   if (!(input instanceof HTMLInputElement)) {
     return;
   }
 
   //Hier suchen wir uns die Datei raus die wir hochgeladen haben
-  const files = input.files;
-  const file = files?.item(0) || null;
+  const file = input.files?.item(0);
+  if (!file) return;
 
-  //Auslesen des ArrayBuffers
-  const content: ArrayBuffer = await file!.arrayBuffer();
-  console.log(content);
+  return loadMapFromBlob(file, gameHeight, gameWidth);
+};
 
-  //überführen in ein Binary Large Object
-  const blob = new Blob([content]);
+//Lädt eine der mitgelieferten Karten über ihre URL
+export const loadMapFromUrl = async (
+  url: string,
+  gameHeight: number,
+  gameWidth: number,
+) => {
+  const response = await fetch(url);
+  return loadMapFromBlob(await response.blob(), gameHeight, gameWidth);
+};
+
+const loadMapFromBlob = async (
+  blob: Blob,
+  gameHeight: number,
+  gameWidth: number,
+) => {
+  let Map = new MapExportObj(
+    new OffscreenCanvas(0, 0),
+    { x: 50, y: 50 },
+    { x: 450, y: 450 },
+  );
 
   //aus dem Blob erstellen wir eine Bitmap um dann die Maße auszulesen
   const bitmap = await createImageBitmap(blob);
@@ -66,7 +77,7 @@ export const handleMapUpload = async (
     Map.spawn = SpawnCoords;
     Map.finish = FinishCoords;
   }
-  
+
   return Map;
 };
 

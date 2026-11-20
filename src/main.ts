@@ -1,5 +1,6 @@
+/// <reference types="vite/client" />
 import * as ex from "excalibur";
-import { handleMapUpload, MapExportObj } from "./helper/mapLoader";
+import { handleMapUpload, loadMapFromUrl, MapExportObj } from "./helper/mapLoader";
 import { startGame } from "./helper/game";
 import { GameCoordinator } from "./helper/gameCoordinator";
 import { DrivingNetwork } from "./AI/Input";
@@ -7,13 +8,14 @@ import { params } from "./AI/params";
 
 const fileInput = document.querySelector<HTMLInputElement>("#fileInput");
 const importInput = document.querySelector<HTMLInputElement>("#importInput");
+
 const width = 500;
 const height = 500;
 
 const game = new ex.Engine({
   canvasElementId: "game",
-  width: 500,
-  height: 500,
+  width: width,
+  height: height,
   pixelRatio: 2,
   backgroundColor: ex.Color.fromHex("#1e293b"),
 });
@@ -37,8 +39,47 @@ const start = async (seed?: DrivingNetwork) => {
 };
 
 fileInput?.addEventListener("change", async (event) => {
-  currentMap = await handleMapUpload(event, height, width);
+  const map = await handleMapUpload(event, height, width);
+  fileInput.value = ""; // damit dieselbe Datei später nochmal gewählt werden kann
+  if (!map) return;
+  currentMap = map;
   start();
+});
+
+// ---------- Kartenauswahl: alle PNGs aus src/assets/maps als Kacheln im Dialog ----------
+
+const mapUrls = import.meta.glob<string>("./assets/maps/*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const mapDialog = document.querySelector<HTMLDialogElement>("#mapDialog");
+const mapGrid = document.querySelector<HTMLElement>("#mapGrid");
+
+Object.entries(mapUrls)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .forEach(([path, url]) => {
+    // "./assets/maps/01_gerade.png" -> "01 gerade"
+    const name = path.split("/").pop()!.replace(".png", "").replace(/_/g, " ");
+
+    const tile = document.createElement("button");
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+    tile.append(img, name);
+
+    tile.addEventListener("click", async () => {
+      mapDialog?.close();
+      currentMap = await loadMapFromUrl(url, height, width);
+      start();
+    });
+    mapGrid?.append(tile);
+  });
+
+document.querySelector("#mapSelectBtn")?.addEventListener("click", () => mapDialog?.showModal());
+// Klick auf den abgedunkelten Hintergrund schließt den Dialog
+mapDialog?.addEventListener("click", (event) => {
+  if (event.target == mapDialog) mapDialog.close();
 });
 
 // ---------- Parameter: jedes <input data-param="..."> schreibt direkt in params ----------
